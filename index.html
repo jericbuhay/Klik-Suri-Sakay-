@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klik, Suri, Sakay! — Paghahambing ng Distansya at Pamasahe sa Lucena City</title>
+  <meta
+    name="description"
+    content="Isang madaling gamiting website ng QNHS Grade 12 – ABM Agile, Group 6 na tumutulong sa mga mag-aaral at commuter sa Lucena City na malaman ang distansya at maihambing ang tinatayang pamasahe ng Traysikel, Maxim MotoTaxi, at JoyRide MC Taxi."
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#top" class="brand">
+        <span class="brand-badge" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10Z"/>
+            <circle cx="12" cy="11" r="2.2"/>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-title">Klik, Suri, Sakay!</span>
+          <span class="brand-sub">Lucena City Fare &amp; Distance Guide</span>
+        </span>
+      </a>
+
+      <nav aria-label="Pangunahing Navigation" class="header-links">
+        <a href="#calculator" class="header-link">Calculator</a>
+        <a href="#gabay" class="header-link">Paano Gamitin</a>
+        <a href="#tungkol" class="header-link">Tungkol sa Proyekto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-card">
+        <span class="hero-pill">QNHS Grade 12 – ABM Agile, Group 6</span>
+        <h1>Klik, Suri, Sakay!</h1>
+        <p class="hero-tagline">"Alamin ang pamasahe. Ihambing ang iyong biyahe. Matalinong bumiyahe."</p>
+        <p class="hero-desc">
+          Isang madaling gamiting website na tumutulong sa mga mag-aaral at commuter na malaman ang distansya,
+          maihambing ang tinatayang pamasahe, at matukoy ang posibleng matitipid sa pagbiyahe sa Lucena City.
+        </p>
+        <a href="#calculator" class="btn btn-cta" id="startBtn">
+          <span>SIMULAN ANG PAGHAHAMBING</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <section id="calculator" class="section">
+      <div class="container">
+        <h2 class="section-heading">Kalkulador ng Distansya at Pamasahe sa Lucena City</h2>
+        <p class="section-sub">
+          Pumili ng pinanggalingan at destinasyon gamit ang paghahanap, listahan ng mga beripikadong lugar, o pagpindot sa mapa.
+        </p>
+
+        <div class="calc-grid">
+          <div class="panel">
+            <div class="method-tabs" role="tablist" aria-label="Paraan ng Pagpili ng Lokasyon">
+              <button
+                type="button"
+                class="tab-btn"
+                id="tabSearchBtn"
+                role="tab"
+                aria-selected="true"
+                aria-controls="panelSearch"
+              >
+                Maghanap ng Lugar
+              </button>
+              <button
+                type="button"
+                class="tab-btn"
+                id="tabListBtn"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panelList"
+              >
+                Listahan ng Lugar
+              </button>
+              <button
+                type="button"
+                class="tab-btn"
+                id="tabMapHintBtn"
+                role="tab"
+                aria-selected="false"
+                aria-controls="panelMapInfo"
+              >
+                Pindutin sa Mapa
+              </button>
+            </div>
+
+            <div id="panelSearch" role="tabpanel" aria-labelledby="tabSearchBtn">
+              <div class="input-group">
+                <label for="pickupInput" class="input-label">
+                  <span class="pin-dot pin-dot-pickup" aria-hidden="true"></span>
+                  <span>Pinanggalingan (Pickup Location)</span>
+                </label>
+                <div class="input-row">
+                  <input
+                    id="pickupInput"
+                    type="text"
+                    class="text-input"
+                    placeholder="Hal. Quezon National High School, SM City Lucena, Iyam..."
+                    autocomplete="off"
+                    aria-autocomplete="list"
+                    aria-controls="pickupSuggestions"
+                  />
+                </div>
+                <div id="pickupSelectedChip" class="selected-chip" hidden></div>
+                <ul id="pickupSuggestions" class="suggestions-list" role="listbox" hidden></ul>
+              </div>
+
+              <div class="input-group">
+                <label for="destInput" class="input-label">
+                  <span class="pin-dot pin-dot-dest" aria-hidden="true"></span>
+                  <span>Destinasyon (Destination)</span>
+                </label>
+                <div class="input-row">
+                  <input
+                    id="destInput"
+                    type="text"
+                    class="text-input"
+                    placeholder="Hal. Pacific Mall Lucena, Quezon Medical Center, Dalahican..."
+                    autocomplete="off"
+                    aria-autocomplete="list"
+                    aria-controls="destSuggestions"
+                  />
+                </div>
+                <div id="destSelectedChip" class="selected-chip dest-chip" hidden></div>
+                <ul id="destSuggestions" class="suggestions-list" role="listbox" hidden></ul>
+              </div>
+            </div>
+
+            <div id="panelList" role="tabpanel" aria-labelledby="tabListBtn" hidden>
+              <div class="directory-box">
+                <div class="assign-target-bar">
+                  <span style="font-weight:700; font-size:0.9rem;">Itatakda bilang:</span>
+                  <button type="button" class="btn btn-sm btn-primary" id="assignPickupBtn">Pinanggalingan</button>
+                  <button type="button" class="btn btn-sm btn-secondary" id="assignDestBtn">Destinasyon</button>
+                </div>
+
+                <label for="directoryFilterInput" class="sr-only">Salain ang listahan ng mga lugar</label>
+                <input
+                  id="directoryFilterInput"
+                  type="text"
+                  class="text-input"
+                  style="margin-bottom: 10px;"
+                  placeholder="Salain ang listahan (paaralan, mall, barangay, ospital)..."
+                />
+
+                <div id="directoryList" class="directory-scroll" aria-live="polite"></div>
+              </div>
+            </div>
+
+            <div id="panelMapInfo" role="tabpanel" aria-labelledby="tabMapHintBtn" hidden>
+              <div class="directory-box">
+                <p style="margin:0 0 10px; font-weight:700; color:var(--blue-900);">
+                  Paano pumili gamit ang Mapa:
+                </p>
+                <ol style="margin:0; padding-left:20px; color:var(--gray-700); font-size:0.95rem;">
+                  <li>Piliin sa itaas ng mapa kung <strong>Pinanggalingan</strong> o <strong>Destinasyon</strong> ang ilalagay.</li>
+                  <li>Pindutin ang eksaktong lokasyon sa mapa ng Lucena City.</li>
+                  <li>Maaari mong <strong>i-drag (hilain)</strong> ang mga pin upang baguhin ang lokasyon anumang oras.</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="action-row">
+              <button type="button" class="btn btn-secondary btn-sm" id="swapBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m7 16-4-4 4-4"/><path d="M3 12h18"/><path d="m17 8 4 4-4 4"/>
+                </svg>
+                Pagpalitin
+              </button>
+              <button type="button" class="btn btn-subtle btn-sm" id="resetBtn">
+                I-reset / Burahin Lahat
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="map-toolbar">
+              <div class="pin-mode-group" role="group" aria-label="Piliin kung aling pin ang ilalagay sa mapa">
+                <button type="button" class="btn btn-sm btn-primary" id="mapModePickupBtn">
+                  Ilagay ang Pinanggalingan
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary" id="mapModeDestBtn">
+                  Ilagay ang Destinasyon
+                </button>
+              </div>
+              <button type="button" class="btn btn-sm btn-subtle" id="centerLucenaBtn">
+                I-sentro sa Lucena
+              </button>
+            </div>
+
+            <div id="map" role="region" aria-label="Interactive na Mapa ng Lucena City"></div>
+            <p class="map-hint" id="mapStatusHint">
+              Pindutin ang mapa upang maglagay ng Pinanggalingan (Asul) at Destinasyon (Dilaw). Maaari ring i-drag ang mga pin.
+            </p>
+          </div>
+        </div>
+
+        <div id="distanceStatusBanner" class="status-banner" aria-live="polite">
+          <div>
+            <div style="font-size:0.9rem; font-weight:700; color:var(--gray-600);" id="routeSummaryText">
+              Pumili ng pinanggalingan at destinasyon upang awtomatikong makalkula ang road distance.
+            </div>
+            <div class="distance-big" id="distanceDisplay">— km</div>
+          </div>
+          <div id="retryRouteWrap" hidden>
+            <button type="button" class="btn btn-sm btn-primary" id="retryRouteBtn">Subukan Muli ang Ruta</button>
+          </div>
+        </div>
+
+        <div class="tricycle-controls" aria-label="Opsyon para sa Traysikel">
+          <div>
+            <strong style="display:block; color:var(--blue-900);">Opsyon sa Traysikel (City Ordinance No. 2914, Series of 2025)</strong>
+            <span style="font-size:0.9rem; color:var(--gray-600);">Piliin ang uri ng biyahe at diskwento kung kwalipikado.</span>
+          </div>
+          <div class="radio-pills">
+            <label class="radio-pill active" id="tripRegularLabel">
+              <input type="radio" name="tricycleTripType" value="regular" checked />
+              <span>Regular Trip (₱20 unang 2 km)</span>
+            </label>
+            <label class="radio-pill" id="tripSpecialLabel">
+              <input type="radio" name="tricycleTripType" value="special" />
+              <span>Special Trip (₱60 unang 2 km)</span>
+            </label>
+            <label class="radio-pill" id="studentDiscountLabel">
+              <input type="checkbox" id="studentDiscountToggle" />
+              <span>Student Discount (20%)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="cards-grid" id="fareCardsGrid" aria-live="polite">
+          <article class="fare-card" id="cardTricycle">
+            <div>
+              <div id="badgeTricycle" class="cheapest-badge" hidden>PINAKAMURANG OPSYON</div>
+              <div class="service-header">
+                <div class="service-icon" aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="5.5" cy="17.5" r="2.5"/><circle cx="18.5" cy="17.5" r="2.5"/>
+                    <path d="M8 17.5h8"/><path d="M5.5 15V9a2 2 0 0 1 2-2h6l3 5h2.5a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                </div>
+                <h3 class="service-name">Traysikel</h3>
+              </div>
+
+              <div id="tricyclePriceWrap">
+                <div class="fare-unavailable">Pumili ng ruta upang makita ang tinatayang pamasahe.</div>
+              </div>
+
+              <ul class="fare-meta-list" id="tricycleMeta">
+                <li>Distansya: <strong class="meta-dist">—</strong></li>
+                <li>Uri ng biyahe: <strong id="metaTrikeTrip">Regular Trip</strong></li>
+                <li>Student discount: <strong id="metaTrikeDiscount">Hindi nakalapat</strong></li>
+              </ul>
+
+              <p class="card-note">
+                Pagtataya lamang batay sa City Ordinance No. 2914, Series of 2025. Beripikahin sa pinakabagong opisyal na taripa ng Lucena City.
+              </p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm view-breakdown-btn" data-service="tricycle">
+              Tingnan ang Detalye
+            </button>
+          </article>
+
+          <article class="fare-card" id="cardMaxim">
+            <div>
+              <div id="badgeMaxim" class="cheapest-badge" hidden>PINAKAMURANG OPSYON</div>
+              <div class="service-header">
+                <div class="service-icon" aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="5.5" cy="17" r="3"/><circle cx="18.5" cy="17" r="3"/>
+                    <path d="M12 17V9l3-3h3"/><path d="M8.5 17h4l3-6h-5l-2 4"/>
+                  </svg>
+                </div>
+                <h3 class="service-name">Maxim MotoTaxi</h3>
+              </div>
+
+              <div id="maximPriceWrap">
+                <div class="fare-unavailable">Pumili ng ruta upang makita ang tinatayang pamasahe.</div>
+              </div>
+
+              <ul class="fare-meta-list" id="maximMeta">
+                <li>Distansya: <strong class="meta-dist">—</strong></li>
+                <li>Fare basis: <strong>Maxim City Tariff (Configurable Bracket)</strong></li>
+              </ul>
+
+              <p class="card-note">
+                Batay sa inilathalang Maxim MotoTaxi City tariff. Maaaring mag-iba ang aktuwal na presyo depende sa kondisyon ng biyahe.
+              </p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm view-breakdown-btn" data-service="maxim">
+              Tingnan ang Detalye
+            </button>
+          </article>
+
+          <article class="fare-card" id="cardJoyride">
+            <div>
+              <div id="badgeJoyride" class="cheapest-badge" hidden>PINAKAMURANG OPSYON</div>
+              <div class="service-header">
+                <div class="service-icon" aria-hidden="true">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="5.5" cy="17" r="3"/><circle cx="18.5" cy="17" r="3"/>
+                    <path d="M14 6h3l2 5"/><path d="M8.5 17l3.5-6h4"/>
+                  </svg>
+                </div>
+                <h3 class="service-name">JoyRide MC Taxi</h3>
+              </div>
+
+              <div id="joyridePriceWrap">
+                <div class="fare-unavailable">Pumili ng ruta upang makita ang tinatayang pamasahe.</div>
+              </div>
+
+              <ul class="fare-meta-list" id="joyrideMeta">
+                <li>Distansya: <strong class="meta-dist">—</strong></li>
+                <li>Formula: <strong>F = max(50, 45 + 5d)</strong> (Paunang Modelo)</li>
+              </ul>
+
+              <p class="card-note">
+                Batay sa paunang pagsusuri ng mga pamasahe na nakalap ng mga mananaliksik. Ang halagang ipinapakita ay pagtataya lamang at hindi opisyal na taripa ng JoyRide.
+              </p>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm view-breakdown-btn" data-service="joyride">
+              Tingnan ang Detalye
+            </button>
+          </article>
+        </div>
+
+        <section class="savings-box" id="savingsSection" aria-live="polite" hidden>
+          <p class="savings-label">TANTSANG MATITIPID</p>
+          <h3 class="savings-headline" id="savingsHeadline">—</h3>
+          <p class="savings-sub" id="savingsSub">—</p>
+          <p class="savings-disclaimer">
+            Paalala: Pagtataya lamang ang matitipid (Mas Mataas na Pamasahe − Mas Mababang Pamasahe) at hindi ito garantisadong aktuwal na halaga.
+          </p>
+        </section>
+
+        <div class="breakdown-toggle-wrap">
+          <button type="button" class="btn btn-primary" id="toggleBreakdownBtn" aria-expanded="false" aria-controls="breakdownPanel">
+            TINGNAN ANG DETALYE NG PAMASAHE
+          </button>
+        </div>
+
+        <section id="breakdownPanel" class="breakdown-panel" hidden aria-live="polite">
+          <h3 style="margin:0 0 6px; color:var(--blue-900);">Detalye ng Pagkalkula ng Pamasahe</h3>
+          <p style="margin:0; font-size:0.95rem; color:var(--gray-600);">
+            Ipinapakita sa ibaba ang hakbang-hakbang na pagkalkula gamit ang iisang road distance para sa patas na paghahambing.
+          </p>
+          <div class="breakdown-grid" id="breakdownGrid"></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="gabay" class="section section-alt">
+      <div class="container">
+        <h2 class="section-heading">Paano Gamitin ang Website</h2>
+        <p class="section-sub">Apat na simpleng hakbang upang makapaghambing ng pamasahe sa Lucena City.</p>
+
+        <div class="steps-grid">
+          <article class="step-card">
+            <div class="step-number">1</div>
+            <h3>Piliin ang Pinanggalingan</h3>
+            <p>Hanapin o piliin ang lugar kung saan magsisimula ang biyahe.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">2</div>
+            <h3>Piliin ang Destinasyon</h3>
+            <p>Ilagay ang lugar na pupuntahan.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">3</div>
+            <h3>Tingnan ang Distansya at Pamasahe</h3>
+            <p>Awtomatikong kalkulahin ng website ang distansya at tinatayang pamasahe.</p>
+          </article>
+
+          <article class="step-card">
+            <div class="step-number">4</div>
+            <h3>Alamin ang Tantsang Matitipid</h3>
+            <p>Ihambing ang mga presyo at piliin ang angkop na transportasyon.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="tungkol" class="section">
+      <div class="container">
+        <h2 class="section-heading">TUNGKOL SA PROYEKTO</h2>
+        <div class="about-grid">
+          <div class="panel">
+            <p style="margin:0; font-size:1.03rem; color:var(--gray-700);">
+              Ang Klik, Suri, Sakay! ay isang website na binuo ng QNHS Grade 12 – ABM Agile, Group 6 ng Quezon National
+              High School bilang teknolohikal na produkto ng kanilang pananaliksik. Layunin nitong matulungan ang mga
+              mag-aaral at commuter sa Lucena City na malaman ang distansya ng kanilang biyahe, maihambing ang
+              tinatayang pamasahe ng traysikel, Maxim MotoTaxi, at JoyRide MC Taxi, at matukoy ang posibleng matitipid
+              sa pagpili ng angkop na transportasyon. Sa pamamagitan ng website na ito, mas magiging madali ang pagkuha
+              ng impormasyon tungkol sa pamasahe at paggawa ng matalinong desisyon batay sa pangangailangan at badyet
+              ng bawat pasahero.
+            </p>
+          </div>
+
+          <aside class="credits-card" aria-label="Impormasyon ng mga Mananaliksik">
+            <dl style="margin:0;">
+              <dt>Binuo ng</dt>
+              <dd>QNHS Grade 12 – ABM Agile, Group 6</dd>
+              <dt>Paaralan</dt>
+              <dd>Quezon National High School</dd>
+              <dt>Sakop na Lugar</dt>
+              <dd>Lucena City, Quezon</dd>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="disclaimer-box">
+        <h2>Paalala at Limitasyon ng mga Pagtataya</h2>
+        <p>
+          Ang mga halagang ipinapakita sa website na ito ay mga pagtataya lamang batay sa nakalap na impormasyon at mga
+          batayan ng pamasahe na ginamit ng mga mananaliksik. Maaaring magbago ang aktuwal na halaga depende sa distansya,
+          oras, kondisyon ng biyahe, demand, at iba pang salik. Ang mga pagtataya ay hindi katumbas ng opisyal na
+          presyong ibinibigay ng mga kompanya o mga drayber. Para sa eksaktong halaga, sumangguni sa mismong
+          aplikasyon o tagapagbigay ng serbisyo.
+        </p>
+        <p>
+          Ang distansya ay nakabatay sa rutang ipinakita ng mapa at maaaring mag-iba sa aktuwal na rutang dadaanan.
+        </p>
+
+        <div class="distinction-grid">
+          <div class="distinction-item">
+            <strong>1. Opisyal na Taripa</strong>
+            Ordinansa ng pamahalaang lokal (hal. City Ordinance No. 2914, Series of 2025 para sa Traysikel sa Lucena City).
+          </div>
+          <div class="distinction-item">
+            <strong>2. Presyong Nakalap mula sa Aplikasyon</strong>
+            Inilathalang City tariff screenshot ng Maxim MotoTaxi at 30 fare quotations na nakalap sa JoyRide MC Taxi app.
+          </div>
+          <div class="distinction-item">
+            <strong>3. Tinatayang Presyong Kinuwenta ng Website</strong>
+            Awtomatikong kalkulasyon ng website gamit ang road distance ng OSRM/OpenStreetMap at mga nakahiwalay na formula ng pananaliksik.
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Klik, Suri, Sakay! — QNHS Grade 12 – ABM Agile, Group 6 (Quezon National High School)</span>
+        <span>Mapa at Ruta: © OpenStreetMap contributors, OSRM, Nominatim</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="fare-config.js"></script>
+  <script src="locations.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
